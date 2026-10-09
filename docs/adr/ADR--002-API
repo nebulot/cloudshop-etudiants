@@ -1,0 +1,38 @@
+# ADR-002 : choix du service de calcul de l'API
+
+- **Statut** : accepté
+- **Date** : 2026-10-09
+- **Décideurs** : groupe CloudShop
+
+## Contexte
+
+Notre API doit être hautement disponible, capable de supporter des pics de charge de manière élastique, tout en restant simple à maintenir pour une équipe technique de taille réduite. Nous cherchons à minimiser le temps passé sur la gestion de l'infrastructure (système d'exploitation, patches de sécurité) pour nous concentrer sur le code métier.
+
+## Décision
+
+L'option retenue est l'Option 1 (Conteneurs managés) car elle offre le meilleur compromis entre la flexibilité de Docker et l'absence de gestion de serveurs physiques.
+Ce qui devient plus facile : Le déploiement continu et la scalabilité de l'API lors des pics de charge.
+Ce qui devient plus difficile : L'optimisation fine de la configuration de la mémoire et du CPU pour éviter le gaspillage budgétaire.
+Ce qui devient plus risqué : La dépendance aux mécanismes spécifiques de mise à l'échelle du fournisseur Cloud choisi.
+
+## Options étudiées
+
+1. Conteneurs managés (ex: AWS ECS Fargate, Google Cloud Run ou Azure Container Apps)
+   • Avantages : Format Docker universel, scalabilité automatique rapide, aucune machine virtuelle à patcher soi-même (Serverless Container).
+   • Inconvénients : Temps de démarrage à froid (cold start) lors des pics soudains, coût à la ressource CPU/RAM plus élevé qu'un serveur classique si l'application tourne à 100 % H24.
+   • Coût mensuel estimé : Modéré (facturation à la seconde d'utilisation des conteneurs).
+2. Fonctions Serverless (ex: AWS Lambda ou Google Cloud Functions)
+   • Avantages : Coût nul en l'absence de trafic, scalabilité quasi-infinie et instantanée, aucun serveur à gérer.
+   • Inconvénients : Contraintes strictes sur le temps d'exécution (souvent limité à 15 min), architecture du code à adapter (découpage en micro-fonctions), cold starts plus prononcés.
+   • Coût mensuel estimé : Très faible au lancement, augmente proportionnellement au nombre d'appels.
+3. Serveurs virtuels classiques (ex: AWS EC2 ou Google Compute Engine)
+   • Avantages : Contrôle total sur l'environnement, performance brute prévisible, coût fixe avantageux pour une charge stable.
+   • Inconvénients : Maintenance logicielle lourde (mises à jour OS), scalabilité automatique lente à réagir, facturation continue même si le serveur est inactif.
+   • Coût mensuel estimé : Élevé en cas de sur-dimensionnement pour anticiper les pics.
+
+## Conséquences
+
+- Le premier appel dev peut subir la latence d'un réveil après scale-to-zero.
+- Le conteneur doit être stateless ; les données vont dans SQL/Storage.
+- Les performances et le coût dépendront du nombre de réplicas, du CPU/mémoire et du trafic.
+- Une panne régionale n'est pas couverte par une seule Container App : le multi-région reste une évolution documentée dans `docs/slaCor.md` ou `docs/sla.md` au choix selon résultat.

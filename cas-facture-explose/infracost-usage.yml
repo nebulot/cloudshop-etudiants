@@ -1,0 +1,11 @@
+# Hypothèses d'usage pour les ressources facturées à la consommation
+version: 0.1
+resource_usage:
+  azurerm_log_analytics_workspace.law:
+    monthly_log_data_ingestion_gb: 150
+  azurerm_application_insights.ai:
+    monthly_data_ingestion_gb: 60
+  azurerm_storage_account.data:
+    storage_gb: 2000
+    monthly_write_operations: 5000000
+    monthly_read_operations: 20000000

@@ -1,0 +1,31 @@
+# ADR-001 : choix de la région Azure
+
+- **Statut** : accepté
+- **Date** : 2026-10-09
+- **Décideurs** : groupe CloudShop
+
+## Contexte
+
+L'application doit être déployée sur une infrastructure Cloud. Le choix de la région géographique d'hébergement est stratégique car il impacte directement l'expérience utilisateur, les coûts d'infrastructure, ainsi que la conformité légale. Nos utilisateurs finaux sont majoritairement situés en Europe, et nous manipulons des données personnelles soumises à des réglementations strictes.
+
+## Décision
+
+L'option retenue est l'Option 2 (Région France - Paris) afin de garantir la souveraineté des données et d'assurer la latence la plus faible possible pour nos utilisateurs.
+
+## Options étudiées
+
+1. Région Europe Centrale (ex: AWS eu-west-1 à Dublin ou Google Cloud europe-west3 à Francfort)
+   • Avantages : Régions historiques majeures disposant de l'intégralité des services Cloud, souvent légèrement moins chères que les autres régions européennes.
+   • Inconvénients : Latence réseau légèrement supérieure pour les utilisateurs français par rapport à un hébergement local.
+   • Coût mensuel estimé : Ligne de base (Tarif standard).
+
+2. Région France (ex: AWS eu-west-3 à Paris ou Google Cloud europe-west9 à Paris)
+   • Avantages : Excellente latence pour le public français. Souveraineté des données optimale (les données restent sur le territoire national). Parfait alignement avec le RGPD.
+   • Inconvénients : Coût des services généralement 5 à 10 % plus élevé que les régions d'Europe Centrale. Moins de zones de disponibilité disponibles dans certains cas.
+   • Coût mensuel estimé : Environ +10 % par rapport à l'Option 1.
+
+## Conséquences
+
+Ce qui devient plus facile : Le respect de la conformité RGPD et les discussions liées à la sécurité des données avec nos clients français.
+Ce qui devient plus difficile : La gestion d'un catalogue de services cloud parfois légèrement plus restreint lors des lancements de nouvelles fonctionnalités par le fournisseur.
+Ce qui devient plus cher : Les coûts d'infrastructure globale subissent une hausse d'environ 10 %.
