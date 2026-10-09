@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CloudShop</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f4f7f6; color: #16302b; }
+    main { max-width: 720px; margin: 10vh auto; padding: 2rem; background: #fff; border-radius: 12px; }
+    code { background: #e6efec; padding: .1rem .3rem; border-radius: 4px; }
+    #status { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CloudShop</h1>
+    <p>Frontend statique servi par un compte de stockage Azure (static website).</p>
+    <p>Environnement : <code id="env">__ENV__</code></p>
+    <p>API : <span id="status">vérification…</span></p>
+  </main>
+  <script>
+    // __API_URL__ est remplacé par le pipeline de déploiement (deploy-frontend.yml)
+    const api = "__API_URL__";
+    fetch(api).then(r => {
+      document.getElementById("status").textContent = r.ok ? "joignable (" + r.status + ")" : "erreur " + r.status;
+    }).catch(() => {
+      document.getElementById("status").textContent = "injoignable (scale-to-zero en cours de réveil ?)";
+    });
+  </script>
+</body>
+</html>
